@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOTR Trivia Quest</title>
+    <style>
+        /* Background and Body */
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            font-family: 'Georgia', serif;
+            color: #e0e0e0;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background-color: rgba(22, 33, 62, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(201, 162, 39, 0.3);
+            border: 2px solid #c9a227;
+        }
+
+        /* Header */
+        h1 {
+            text-align: center;
+            color: #ffd700;
+            font-family: 'Times New Roman', serif;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px #000;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #b0b0b0;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        /* Navigation Link */
+        .nav-link {
+            display: block;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .nav-link a {
+            color: #c9a227;
+            text-decoration: none;
+            font-size: 1em;
+        }
+
+        .nav-link a:hover {
+            color: #ffd700;
+            text-decoration: underline;
+        }
+
+        /* Question Styling */
+        .question-container {
+            background-color: rgba(26, 26, 46, 0.8);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            color: #c9a227;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            line-height: 1.5;
+            color: #ffffff;
+        }
+
+        /* Answer Buttons */
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .answer-btn {
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            border: 2px solid #c9a227;
+            padding: 15px 20px;
+            font-size: 1.1em;
+            font-family: 'Georgia', serif;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .answer-btn:hover {
+            background-color: #c9a227;
+            color: #1a1a2e;
+        }
+
+        .answer-btn.correct {
+            background-color: #2e7d32;
+            border-color: #4caf50;
+            color: #ffffff;
+        }
+
+        .answer-btn.incorrect {
+            background-color: #c62828;
+            border-color: #ef5350;
+            color: #ffffff;
+        }
+
+        .answer-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        /* Score Display */
+        .score-display {
+            text-align: center;
+            font-size: 1.2em;
+            color: #c9a227;
+            margin-bottom: 20px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background-color: #1a1a2e;
+            border-radius: 10px;
+            height: 20px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: 1px solid #c9a227;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #c9a227, #ffd700);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        /* Results Screen */
+        .results {
+            text-align: center;
+        }
+
+        .results h2 {
+            color: #ffd700;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .final-score {
+            font-size: 3em;
+            color: #c9a227;
+            margin: 20px 0;
+        }
+
+        .score-message {
+            font-size: 1.3em;
+            color: #b0b0b0;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        /* Restart Button */
+        .restart-btn {
+            background: linear-gradient(135deg, #c9a227, #ffd700);
+            color: #1a1a2e;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            font-family: 'Georgia', serif;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(201, 162, 39, 0.5);
+        }
+
+        /* Difficulty Selection */
+        .difficulty-container {
+            text-align: center;
+        }
+
+        .difficulty-container h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+
+        .difficulty-btn {
+            background-color: #1a1a2e;
+            color: #c9a227;
+            border: 2px solid #c9a227;
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 1.1em;
+            font-family: 'Georgia', serif;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .difficulty-btn:hover {
+            background-color: #c9a227;
+            color: #1a1a2e;
+        }
+
+        /* Ring Animation */
+        .ring-icon {
+            font-size: 4em;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="nav-link">
+            <a href="lotr.html">← Back to Lord of the Rings Page</a>
+        </div>
+
+        <h1>🏔️ LOTR Trivia Quest 🏔️</h1>
+        <p class="subtitle">Test your knowledge of Middle-earth!</p>
+
+        <!-- Difficulty Selection Screen -->
+        <div id="difficulty-screen" class="difficulty-container">
+            <h2>Choose Your Path</h2>
+            <p>Select your difficulty level:</p>
+            <button class="difficulty-btn" onclick="startQuiz('easy')">🌿 Hobbit (Easy)</button>
+            <button class="difficulty-btn" onclick="startQuiz('medium')">⚔️ Ranger (Medium)</button>
+            <button class="difficulty-btn" onclick="startQuiz('hard')">🧙 Wizard (Hard)</button>
+            <div class="ring-icon">💍</div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden">
+            <div class="score-display">
+                Score: <span id="score">0</span> | Streak: <span id="streak">0</span>🔥
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <div class="question-container">
+                <div class="question-number" id="question-number"></div>
+                <div class="question-text" id="question-text"></div>
+            </div>
+
+            <div class="answers" id="answers"></div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="hidden results">
+            <h2>Quest Complete!</h2>
+            <div class="ring-icon">💍</div>
+            <div class="final-score" id="final-score"></div>
+            <div class="score-message" id="score-message"></div>
+            <button class="restart-btn" onclick="showDifficulty()">Begin New Quest</button>
+        </div>
+    </div>
+
+    <script>
+        // Question Database
+        const questions = {
+            easy: [
+                {
+                    question: "What is the name of Frodo's home in the Shire?",
+                    answers: ["Bag End", "Rivendell", "Bree", "Hobbiton Hall"],
+                    correct: 0
+                },
+                {
+                    question: "What color is Gandalf's hat?",
+                    answers: ["Blue", "Grey", "Black", "Brown"],
+                    correct: 1
+                },
+                {
+                    question: "Who is Frodo's loyal gardener and companion?",
+                    answers: ["Merry", "Pippin", "Samwise", "Bilbo"],
+                    correct: 2
+                },
+                {
+                    question: "What type of creature is Gollum?",
+                    answers: ["Orc", "Hobbit", "Elf", "Dwarf"],
+                    correct: 1
+                },
+                {
+                    question: "What does Gollum call the One Ring?",
+                    answers: ["My Love", "My Precious", "My Treasure", "My Ring"],
+                    correct: 1
+                },
+                {
+                    question: "Who is the King that returns in 'Return of the King'?",
+                    answers: ["Boromir", "Faramir", "Aragorn", "Théoden"],
+                    correct: 2
+                },
+                {
+                    question: "What race is Legolas?",
+                    answers: ["Human", "Dwarf", "Hobbit", "Elf"],
+                    correct: 3
+                },
+                {
+                    question: "Where must the One Ring be destroyed?",
+                    answers: ["Rivendell", "Mount Doom", "Minas Tirith", "The Shire"],
+                    correct: 1
+                },
+                {
+                    question: "What weapon does Gimli prefer?",
+                    answers: ["Sword", "Bow", "Axe", "Spear"],
+                    correct: 2
+                },
+                {
+                    question: "Who wrote The Lord of the Rings?",
+                    answers: ["C.S. Lewis", "J.R.R. Tolkien", "George R.R. Martin", "Terry Pratchett"],
+                    correct: 1
+                }
+            ],
+            medium: [
+                {
+                    question: "What is the Elvish name for Rivendell?",
+                    answers: ["Lothlórien", "Imladris", "Gondolin", "Mirkwood"],
+                    correct: 1
+                },
+                {
+                    question: "How many Rings of Power were given to the Dwarf-lords?",
+                    answers: ["Three", "Seven", "Nine", "One"],
+                    correct: 1
+                },
+                {
+                    question: "What is the name of Gandalf's horse?",
+                    answers: ["Shadowfax", "Bill", "Brego", "Asfaloth"],
+                    correct: 0
+                },
+                {
+                    question: "Who is the Lady of Lothlórien?",
+                    answers: ["Arwen", "Éowyn", "Galadriel", "Rosie"],
+                    correct: 2
+                },
+                {
+                    question: "What is the name of Aragorn's sword?",
+                    answers: ["Glamdring", "Sting", "Andúril", "Orcrist"],
+                    correct: 2
+                },
+                {
+                    question: "Which tower does Saruman reside in?",
+                    answers: ["Barad-dûr", "Orthanc", "Minas Morgul", "Cirith Ungol"],
+                    correct: 1
+                },
+                {
+                    question: "What creature does the Fellowship encounter in the Mines of Moria?",
+                    answers: ["Dragon", "Balrog", "Shelob", "Nazgûl"],
+                    correct: 1
+                },
+                {
+                    question: "What is the name of Frodo's sword?",
+                    answers: ["Andúril", "Sting", "Glamdring", "Narsil"],
+                    correct: 1
+                },
+                {
+                    question: "Who kills the Witch-king of Angmar?",
+                    answers: ["Aragorn", "Gandalf", "Éowyn", "Legolas"],
+                    correct: 2
+                },
+                {
+                    question: "What kingdom does Théoden rule?",
+                    answers: ["Gondor", "Rohan", "Arnor", "Dale"],
+                    correct: 1
+                }
+            ],
+            hard: [
+                {
+                    question: "What year was 'The Fellowship of the Ring' first published?",
+                    answers: ["1937", "1949", "1954", "1962"],
+                    correct: 2
+                },
+                {
+                    question: "What is the name of Tom Bombadil's wife?",
+                    answers: ["Goldberry", "Arwen", "Lúthien", "Melian"],
+                    correct: 0
+                },
+                {
+                    question: "Who forged the One Ring?",
+                    answers: ["Celebrimbor", "Sauron", "Morgoth", "Aulë"],
+                    correct: 1
+                },
+                {
+                    question: "What is Aragorn's Elvish name?",
+                    answers: ["Thorongil", "Elessar", "Estel", "Strider"],
+                    correct: 2
+                },
+                {
+                    question: "How many palantíri were made?",
+                    answers: ["Three", "Five", "Seven", "Nine"],
+                    correct: 2
+                },
+                {
+                    question: "What is the name of Galadriel's ring?",
+                    answers: ["Narya", "Nenya", "Vilya", "The One"],
+                    correct: 1
+                },
+                {
+                    question: "Who was Sméagol's friend that he killed for the Ring?",
+                    answers: ["Déagol", "Bandobras", "Tobold", "Marcho"],
+                    correct: 0
+                },
+                {
+                    question: "What does 'Mordor' mean in Sindarin?",
+                    answers: ["Dark Land", "Black Land", "Shadow Land", "Dead Land"],
+                    correct: 1
+                },
+                {
+                    question: "Who is Elrond's daughter?",
+                    answers: ["Galadriel", "Celebrían", "Arwen", "Lúthien"],
+                    correct: 2
+                },
+                {
+                    question: "What inn do the Hobbits stay at in Bree?",
+                    answers: ["The Green Dragon", "The Prancing Pony", "The Golden Perch", "The Ivy Bush"],
+                    correct: 1
+                }
+            ]
+        };
+
+        // Game State
+        let currentQuestions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+        let difficulty = '';
+
+        // DOM Elements
+        const difficultyScreen = document.getElementById('difficulty-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const questionNumber = document.getElementById('question-number');
+        const questionText = document.getElementById('question-text');
+        const answersContainer = document.getElementById('answers');
+        const scoreDisplay = document.getElementById('score');
+        const streakDisplay = document.getElementById('streak');
+        const progressBar = document.getElementById('progress-bar');
+        const finalScore = document.getElementById('final-score');
+        const scoreMessage = document.getElementById('score-message');
+
+        // Shuffle function
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Start Quiz
+        function startQuiz(level) {
+            difficulty = level;
+            currentQuestions = shuffleArray(questions[level]).slice(0, 10);
+            currentQuestion = 0;
+            score = 0;
+            streak = 0;
+
+            difficultyScreen.classList.add('hidden');
+            resultsScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+
+            updateScore();
+            showQuestion();
+        }
+
+        // Show Question
+        function showQuestion() {
+            const q = currentQuestions[currentQuestion];
+            questionNumber.textContent = `Question ${currentQuestion + 1} of ${currentQuestions.length}`;
+            questionText.textContent = q.question;
+
+            // Update progress bar
+            progressBar.style.width = `${((currentQuestion) / currentQuestions.length) * 100}%`;
+
+            // Clear and create answer buttons
+            answersContainer.innerHTML = '';
+            q.answers.forEach((answer, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = answer;
+                btn.onclick = () => selectAnswer(index);
+                answersContainer.appendChild(btn);
+            });
+        }
+
+        // Select Answer
+        function selectAnswer(index) {
+            const q = currentQuestions[currentQuestion];
+            const buttons = answersContainer.querySelectorAll('.answer-btn');
+
+            // Disable all buttons
+            buttons.forEach(btn => btn.disabled = true);
+
+            // Show correct/incorrect
+            if (index === q.correct) {
+                buttons[index].classList.add('correct');
+                score += (streak + 1) * 10;
+                streak++;
+            } else {
+                buttons[index].classList.add('incorrect');
+                buttons[q.correct].classList.add('correct');
+                streak = 0;
+            }
+
+            updateScore();
+
+            // Next question after delay
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < currentQuestions.length) {
+                    showQuestion();
+                } else {
+                    showResults();
+                }
+            }, 1500);
+        }
+
+        // Update Score Display
+        function updateScore() {
+            scoreDisplay.textContent = score;
+            streakDisplay.textContent = streak;
+        }
+
+        // Show Results
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultsScreen.classList.remove('hidden');
+
+            finalScore.textContent = `${score} points`;
+
+            // Custom messages based on score
+            const maxPossible = currentQuestions.length * 10 * 5; // rough max
+            const percentage = score / (currentQuestions.length * 10);
+
+            let message = '';
+            if (percentage >= 1) {
+                message = "You are a true Loremaster of Middle-earth! Gandalf would be proud.";
+            } else if (percentage >= 0.7) {
+                message = "Well done, Ranger! Your knowledge serves you well.";
+            } else if (percentage >= 0.5) {
+                message = "A worthy effort, young Hobbit. Keep studying the lore!";
+            } else {
+                message = "Perhaps spend more time in the libraries of Rivendell...";
+            }
+            scoreMessage.textContent = message;
+        }
+
+        // Show Difficulty Screen
+        function showDifficulty() {
+            resultsScreen.classList.add('hidden');
+            quizScreen.classList.add('hidden');
+            difficultyScreen.classList.remove('hidden');
+        }
+    </script>
+
+</body>
+</html>
